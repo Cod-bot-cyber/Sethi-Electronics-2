@@ -1,0 +1,71 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Public and private profile details for registered customers.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique user authentication ID." },
+        "email": { "type": "string", "description": "The email of the user." },
+        "displayName": { "type": "string", "description": "Display name of the user." },
+        "isAdmin": { "type": "boolean", "description": "Flag to mark if user is a system admin." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "displayName", "isAdmin"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "An ecommerce product available for purchase.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "image": { "type": "string" },
+        "category": { "type": "string" },
+        "stock": { "type": "number" },
+        "rating": { "type": "number" },
+        "salesCount": { "type": "number" },
+        "isFeatured": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "description", "price", "image", "category", "stock"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer order capturing checkout items and billing info.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "subtotal": { "type": "number" },
+        "shippingFee": { "type": "number" },
+        "tax": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "paid", "shipped", "delivered", "cancelled"] },
+        "paymentMethod": { "type": "string" },
+        "paymentId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "customerName", "customerEmail", "subtotal", "shippingFee", "tax", "totalAmount", "status", "paymentMethod", "paymentId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile collection, mapping each uid to their profile info."
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Unified inventory of electronic hardware items."
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Historic ledger of customer purchases and order items."
+    }
+  }
+}

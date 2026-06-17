@@ -1,0 +1,6 @@
+{
+  "name": "Sethi Electronics",
+  "description": "A full-stack e-commerce platform featuring a beautiful catalog, secure user authentication, cart, secure custom payment validation, and a real-time admin inventory management dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

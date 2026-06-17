@@ -1,0 +1,20 @@
+[
+  {
+    "uid": "user-336645",
+    "name": "Hardik Sethi",
+    "email": "sethivipin53@gmail.com",
+    "mobileNumber": "+919319784706",
+    "password": "$2b$10$TPEP9vDBBmpwhG5jnlkgRe/x7nhRtG/smIk1iNEau9HvGerHMFGgG",
+    "createdAt": "2026-06-17T16:39:24.670Z",
+    "isAdmin": false
+  },
+  {
+    "uid": "user-882814",
+    "name": "Hardik Sethi",
+    "email": "helloworld@gmail.com",
+    "mobileNumber": "+919319784706",
+    "password": "$2b$10$7IHYI5QKkPtfnADdteQyZe1nxKaS47cy0cWFpiPq0YEQ2m06fDl2i",
+    "createdAt": "2026-06-17T16:40:22.327Z",
+    "isAdmin": false
+  }
+]
