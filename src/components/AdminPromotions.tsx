@@ -103,6 +103,85 @@ export const AdminPromotions: React.FC = () => {
     setTimeout(() => setMsgNotice(null), 3500);
   };
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [fileUploadError, setFileUploadError] = useState<string | null>(null);
+
+  const compressImage = (file: File, maxWidth = 800, maxHeight = 800): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = document.createElement('img');
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(event.target?.result as string);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          resolve(compressedBase64);
+        };
+        img.onerror = () => reject(new Error('Failed to load image element.'));
+      };
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  const handleUploadCarouselImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setFileUploadError(null);
+
+    try {
+      const base64 = await compressImage(file, 800, 800);
+      const filename = `carousel_${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+
+      await fetch('/api/upload-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          imageName: filename,
+          base64Data: base64
+        })
+      }).catch((err) => {
+        console.warn('Silent fallback: saved to database directly', err);
+      });
+
+      setNewSlide(prev => ({ ...prev, image: base64 }));
+      showNotice('Carousel poster uploaded successfully!');
+    } catch (err: any) {
+      console.error(err);
+      setFileUploadError(err.message || 'Image upload/compression failed.');
+      showNotice('Image upload failed', 'error');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   // --- COUPONS CRUD HANDLERS ---
   const handleCreateCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -645,15 +724,30 @@ export const AdminPromotions: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10.5px] uppercase tracking-wider font-extrabold text-slate-400 mb-1.5">Unsplash Poster Image Link *</label>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="block text-[10.5px] uppercase tracking-wider font-extrabold text-slate-400">Poster Image Link or Upload *</label>
+                    <label className="cursor-pointer bg-gradient-to-r from-violet-600 to-indigo-650 hover:from-violet-500 hover:to-indigo-550 text-white rounded-lg px-2.5 py-1 text-[9px] font-extrabold tracking-widest uppercase transition-all select-none">
+                      {isUploading ? 'Uploading...' : 'Upload Image'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={isUploading}
+                        onChange={handleUploadCarouselImage}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
                   <input
-                    type="url"
+                    type="text"
                     required
                     value={newSlide.image || ''}
                     onChange={(e) => setNewSlide({ ...newSlide, image: e.target.value })}
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="https://images.unsplash.com/... or upload any file"
                     className="w-full bg-[#050215] border border-violet-500/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-500/40 font-mono text-[11px]"
                   />
+                  {fileUploadError && (
+                    <p className="text-[8.5px] font-mono text-rose-400 font-semibold mt-1">{fileUploadError}</p>
+                  )}
                 </div>
 
                 <div>
