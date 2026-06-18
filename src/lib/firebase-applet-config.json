@@ -1,9 +1,10 @@
 {
-  "apiKey": "mock_api_key_for_compilation",
-  "authDomain": "mock-ecom.firebaseapp.com",
-  "projectId": "mock-ecom-project",
-  "storageBucket": "mock-ecom-project.appspot.com",
-  "messagingSenderId": "1234567890",
-  "appId": "1:1234567890:web:mockappid123",
-  "firestoreDatabaseId": "(default)"
+  "apiKey": "AIzaSyBbhJpye6EAkBBwiietvRZu7hbhhJKA9Fc",
+  "authDomain": "sethi-electronics-live.firebaseapp.com",
+  "projectId": "sethi-electronics-live",
+  "storageBucket": "sethi-electronics-live.firebasestorage.app",
+  "messagingSenderId": "1072265989157",
+  "appId": "1:1072265989157:web: 3368e1b0492aa4c4243cc",
+  "firestoreDatabaseId": "(default)",
+  "measurementId": "G-6F0XD0R26Z"
 }

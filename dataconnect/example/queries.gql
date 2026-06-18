@@ -1,0 +1,32 @@
+query ListAllProducts @auth(level: PUBLIC) {
+  products {
+    id
+    name
+    price
+    stockQuantity
+    description
+    imageUrl
+    category
+  }
+}
+
+query GetUserOrders @auth(level: USER) {
+  orders(where: { user: { id: { eq_expr: "auth.uid" } } }) {
+    id
+    totalAmount
+    status
+    shippingAddress
+  }
+}
+
+mutation AddToCart($productId: UUID!, $quantity: Int!) @auth(level: USER) {
+  cartItem_insert(data: {
+    productId: $productId,
+    userId_expr: "auth.uid",
+    quantity: $quantity
+  })
+}
+
+mutation UpdateProductStock($id: UUID!, $newQuantity: Int!) @auth(expr: "auth.token.admin == true") {
+  product_update(key: { id: $id }, data: { stockQuantity: $newQuantity })
+}
