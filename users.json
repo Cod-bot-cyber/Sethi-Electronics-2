@@ -16,5 +16,14 @@
     "password": "$2b$10$7IHYI5QKkPtfnADdteQyZe1nxKaS47cy0cWFpiPq0YEQ2m06fDl2i",
     "createdAt": "2026-06-17T16:40:22.327Z",
     "isAdmin": false
+  },
+  {
+    "uid": "user-327330",
+    "name": "Hardik",
+    "email": "hardik@gmail.com",
+    "mobileNumber": "+917060784706",
+    "password": "$2b$10$pmwwEV7OiPylNKmkY3kAo.NIy6atUmiTK5RprgQM8D66FCUMyn1da",
+    "createdAt": "2026-06-26T17:34:18.643Z",
+    "isAdmin": false
   }
 ]

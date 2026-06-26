@@ -160,7 +160,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, isOpen
                           : 'border-violet-500/10 hover:border-violet-500/30 bg-black/10'
                       }`}
                     >
-                      <img src={img} alt={`Angle ${idx + 1}`} className="w-full h-full object-cover" />
+                      <img src={img} alt={`Angle ${idx + 1}`} className="w-full h-full object-contain p-1" />
                     </button>
                   ))}
                 </div>

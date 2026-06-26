@@ -5,6 +5,60 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Plus, Star, Tag, Info, ShoppingCart, SlidersHorizontal, ArrowUpDown, RefreshCcw } from 'lucide-react';
 import ProductDetailModal from './ProductDetailModal';
 
+const ProductSkeleton: React.FC = () => {
+  return (
+    <div className="relative flex flex-col justify-between bg-[#0a0621]/45 backdrop-blur-md rounded-2xl border border-violet-500/5 overflow-hidden h-full shadow-md select-none">
+      {/* Image Skeleton */}
+      <div className="relative aspect-square w-full bg-[#0a061d]/80 overflow-hidden border-b border-violet-950/25">
+        <div className="shimmer-sweep" />
+      </div>
+
+      {/* Info Panel Skeleton */}
+      <div className="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          {/* Title Line */}
+          <div className="relative h-4 bg-violet-950/20 rounded-md w-3/4 overflow-hidden mb-3.5">
+            <div className="shimmer-sweep" />
+          </div>
+
+          {/* Rating stars */}
+          <div className="relative h-3 w-1/3 bg-violet-950/15 rounded-md overflow-hidden mb-4">
+            <div className="shimmer-sweep" />
+          </div>
+
+          {/* Description Paragraph */}
+          <div className="space-y-2 mt-2">
+            <div className="relative h-3 bg-violet-950/10 rounded w-full overflow-hidden">
+              <div className="shimmer-sweep" />
+            </div>
+            <div className="relative h-3 bg-violet-950/10 rounded w-5/6 overflow-hidden">
+              <div className="shimmer-sweep" />
+            </div>
+          </div>
+        </div>
+
+        {/* Price & Action row */}
+        <div className="mt-5 pt-3.5 border-t border-violet-950/25 flex items-center justify-between">
+          <div className="space-y-1.5">
+            {/* Price tag */}
+            <div className="relative h-4 bg-violet-950/20 rounded-md w-16 overflow-hidden">
+              <div className="shimmer-sweep" />
+            </div>
+            {/* Stock indicator */}
+            <div className="relative h-2.5 bg-violet-950/10 rounded w-12 overflow-hidden">
+              <div className="shimmer-sweep" />
+            </div>
+          </div>
+          {/* Cart Icon circle */}
+          <div className="relative h-8 w-8 bg-violet-950/20 rounded-lg overflow-hidden">
+            <div className="shimmer-sweep" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ProductCatalog: React.FC = () => {
   const { 
     products, 
@@ -94,18 +148,16 @@ const ProductCatalog: React.FC = () => {
         </div>
       </div>
 
-      {/* Empty States */}
-      {filteredProducts.length === 0 ? (
+      {/* Loading Shimmer or Empty States */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, idx) => (
+            <ProductSkeleton key={idx} />
+          ))}
+        </div>
+      ) : filteredProducts.length === 0 ? (
         <div className="text-center py-16 px-6 border border-dashed border-violet-500/20 rounded-2xl bg-[#090525]/30 max-w-lg mx-auto shadow-lg backdrop-blur-md">
-          {isLoading && products.length === 0 ? (
-            <>
-              <RefreshCcw className="w-12 h-12 text-violet-400 mx-auto mb-4 animate-spin" />
-              <h3 className="text-base font-extrabold text-white uppercase tracking-wider font-mono">Synchronizing Secure Inventory...</h3>
-              <p className="text-xs text-slate-400 mt-2 max-w-xs mx-auto font-light leading-relaxed">
-                Connecting to the secure catalog ledger network. Please wait standard handshake clearance...
-              </p>
-            </>
-          ) : products.length === 0 ? (
+          {products.length === 0 ? (
             <>
               <RefreshCcw className={`w-12 h-12 text-violet-400 mx-auto mb-4 ${isResetting ? 'animate-spin' : 'animate-pulse'}`} />
               <h3 className="text-base font-extrabold text-white uppercase tracking-wider font-mono">Store Inventory is Empty</h3>
@@ -186,7 +238,7 @@ const ProductCatalog: React.FC = () => {
                   <img
                     src={p.image}
                     alt={p.name}
-                    className="h-full w-full object-cover transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.02] opacity-80 group-hover:opacity-100"
+                    className="h-full w-full object-contain p-4.5 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 opacity-90 group-hover:opacity-100"
                     referrerPolicy="no-referrer"
                   />
                   

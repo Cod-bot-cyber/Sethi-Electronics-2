@@ -17,20 +17,22 @@ const renderIcon = (name?: string) => {
   return <IconComponent className={`w-3.5 h-3.5 ${animationClass}`} />;
 };
 
+const PromoBannerSkeleton: React.FC = () => {
+  return (
+    <div className="w-full bg-[#07011d] border-b border-violet-950/40 py-1.5 px-4 relative overflow-hidden min-h-[34px] flex items-center justify-center">
+      <div className="relative h-3.5 w-72 bg-violet-955/20 rounded-md overflow-hidden">
+        <div className="shimmer-sweep" />
+      </div>
+    </div>
+  );
+};
+
 const PromoBanner: React.FC = () => {
-  const { promoMessages } = useApp();
+  const { promoMessages, isLoading } = useApp();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [copied, setCopied] = useState(false);
 
-  const messages = promoMessages && promoMessages.length > 0 ? promoMessages : [
-    {
-      id: 'b1',
-      iconName: 'Gift',
-      highlightText: "WELCOME BONUS 🎉",
-      regularText: "Get flat ₹199 Off on your very first order!",
-      codeToCopy: "WELCOME199"
-    }
-  ];
+  const messages = promoMessages || [];
 
   useEffect(() => {
     if (messages.length <= 1) return;
@@ -41,11 +43,13 @@ const PromoBanner: React.FC = () => {
   }, [currentIndex, messages.length]);
 
   const handleNext = () => {
+    if (messages.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % messages.length);
     setCopied(false);
   };
 
   const handlePrev = () => {
+    if (messages.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + messages.length) % messages.length);
     setCopied(false);
   };
@@ -56,6 +60,14 @@ const PromoBanner: React.FC = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (isLoading) {
+    return <PromoBannerSkeleton />;
+  }
+
+  if (messages.length === 0) {
+    return null;
+  }
 
   // Safe index guard
   const safeIndex = currentIndex >= messages.length ? 0 : currentIndex;

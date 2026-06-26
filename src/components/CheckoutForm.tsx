@@ -32,9 +32,14 @@ enum CheckoutStep {
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
-  const { cart, cartTotal, processCheckout, currentUser, activeCoupon, merchantUpiVpa, customUpiQr, updateShopSettings } = useApp();
+  const { cart, cartTotal, processCheckout, currentUser, activeCoupon, applyCoupon, clearCoupon, merchantUpiVpa, customUpiQr, updateShopSettings } = useApp();
   const [step, setStep] = useState<CheckoutStep>(CheckoutStep.SHIPPING);
   const [error, setError] = useState<string | null>(null);
+
+  // Coupon states
+  const [couponInput, setCouponInput] = useState(activeCoupon ? activeCoupon.code : '');
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponSuccessMsg, setCouponSuccessMsg] = useState<string | null>(null);
   
   // Shipping info state
   const [address, setAddress] = useState<ShippingAddress>(() => {
@@ -749,6 +754,61 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
               <div className="flex justify-between text-slate-400 font-light">
                 <span>Shipping Fee</span>
                 <span>{shippingFee === 0 ? <span className="text-emerald-400 font-bold uppercase text-[9px]">Free</span> : `₹${shippingFee}`}</span>
+              </div>
+
+              {/* Promo code field */}
+              <div className="mt-4 pt-4 border-t border-violet-950/50 space-y-2">
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">PROMO CODE</span>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponInput}
+                    onChange={(e) => {
+                      setCouponInput(e.target.value);
+                      setCouponError(null);
+                      setCouponSuccessMsg(null);
+                    }}
+                    placeholder="Enter Code (e.g. WELCOME10)"
+                    disabled={!!activeCoupon}
+                    className="flex-1 rounded-lg bg-[#040118]/80 border border-violet-500/15 focus:border-violet-500/40 px-3 py-2 text-xs text-white uppercase placeholder:normal-case font-mono tracking-wide focus:outline-none disabled:opacity-50"
+                  />
+                  {activeCoupon ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        clearCoupon();
+                        setCouponInput('');
+                        setCouponSuccessMsg(null);
+                        setCouponError(null);
+                      }}
+                      className="rounded-lg bg-red-950/30 hover:bg-red-950/60 text-red-400 border border-red-500/20 px-3 py-2 text-xs font-bold uppercase tracking-widest transition-all cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!couponInput.trim()) return;
+                        const res = applyCoupon(couponInput);
+                        if (res.success) {
+                          setCouponSuccessMsg(res.message);
+                        } else {
+                          setCouponError(res.message);
+                        }
+                      }}
+                      className="rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all cursor-pointer shadow-md shadow-violet-600/15"
+                    >
+                      Apply
+                    </button>
+                  )}
+                </div>
+                {couponError && (
+                  <p className="text-[10px] text-red-400 font-semibold leading-normal mt-1">{couponError}</p>
+                )}
+                {couponSuccessMsg && (
+                  <p className="text-[10px] text-emerald-400 font-semibold leading-normal mt-1">{couponSuccessMsg}</p>
+                )}
               </div>
 
               <div className="flex justify-between text-white font-extrabold text-base border-t border-violet-950 pt-3 font-mono">

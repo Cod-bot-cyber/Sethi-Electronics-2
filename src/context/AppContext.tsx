@@ -109,7 +109,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (e) {
       console.warn('Failed parsing local products on state init:', e);
     }
-    return INITIAL_PRODUCTS;
+    return [];
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const setProducts = React.useCallback((prods: Product[] | ((prev: Product[]) => Product[])) => {
@@ -117,8 +117,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const next = typeof prods === 'function' ? prods(prev) : prods;
       console.log('[DEBUG_LOG] setProducts called with:', next);
       if (!next || !Array.isArray(next) || next.length === 0) {
-        console.warn('[DEBUG_LOG] setProducts received empty arrays, falling back to INITIAL_PRODUCTS.');
-        return INITIAL_PRODUCTS;
+        return [];
       }
       const seen = new Set<string>();
       const deduplicated = next.filter(p => {
@@ -127,10 +126,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         seen.add(p.id);
         return true;
       });
-      if (deduplicated.length === 0) {
-        console.warn('[DEBUG_LOG] setProducts deduplicated to empty, returning INITIAL_PRODUCTS.');
-        return INITIAL_PRODUCTS;
-      }
       return deduplicated;
     });
   }, []);

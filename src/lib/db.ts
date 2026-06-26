@@ -19,127 +19,11 @@ const COUPONS_COLLECTION = 'coupons';
 const CAROUSEL_COLLECTION = 'carousel';
 const BANNERS_COLLECTION = 'banners';
 
-const DEFAULT_COUPONS: Coupon[] = [
-  {
-    id: 'c1',
-    code: 'WELCOME199',
-    type: 'flat',
-    value: 199,
-    minSpend: 0,
-    description: 'Get flat ₹199 Off on your very first order!',
-    isActive: true,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'c2',
-    code: 'WELCOME10',
-    type: 'percent',
-    value: 10,
-    minSpend: 0,
-    description: 'Promo Code WELCOME10 applied! 10% Off saved.',
-    isActive: true,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'c3',
-    code: 'SETHIFLOW',
-    type: 'percent',
-    value: 20,
-    minSpend: 0,
-    description: 'Promo Code SETHIFLOW applied! 20% Off saved.',
-    isActive: true,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'c4',
-    code: 'ELEMENTFLOW',
-    type: 'percent',
-    value: 20,
-    minSpend: 0,
-    description: 'Promo Code ELEMENTFLOW applied! 20% Off saved.',
-    isActive: true,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'c5',
-    code: 'SUPERSTRIKE',
-    type: 'percent',
-    value: 30,
-    minSpend: 0,
-    description: 'Promo Code SUPERSTRIKE applied! 30% Off saved.',
-    isActive: true,
-    createdAt: new Date().toISOString()
-  }
-];
+const DEFAULT_COUPONS: Coupon[] = [];
 
-const DEFAULT_CAROUSEL_SLIDES: CarouselSlide[] = [
-  {
-    id: 'slide-1',
-    badge: "LIMITED RELEASE // 20% OFF SAVED",
-    title: "Tactile Mechanical Gold Linear Nodes",
-    subtitle: "Workspace Mechanical Gears",
-    description: "Experience aerospace-grade latency stabilizers, noise-isolating mechanical gold switches, and reactive RGB atmospheric backlighting.",
-    price: "₹15,999",
-    originalPrice: "₹18,399",
-    code: "SETHIFLOW",
-    image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&q=80&w=1200",
-    iconName: "Cpu",
-    gradient: "from-[#110c37]/90 via-[#0d072c]/90 to-[#030014]/95",
-    accentColor: "border-violet-500/30 text-violet-400"
-  },
-  {
-    id: 'slide-2',
-    badge: "VIP HARDWARE SELECTION // 30% INTRO OFF",
-    title: "Atmospheric Dual-Driver Acoustic Monitors",
-    subtitle: "High-Purity Audio Hardware",
-    description: "Unravel rich spatial soundstages, active hybrid acoustic noise reduction buffers, and soft thermo-sensitive membrane earcups.",
-    price: "₹23,999",
-    originalPrice: "₹27,999",
-    code: "SUPERSTRIKE",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=1200",
-    iconName: "Headphones",
-    gradient: "from-[#08123b]/90 via-[#060a28]/90 to-[#030014]/95",
-    accentColor: "border-blue-500/30 text-blue-400"
-  },
-  {
-    id: 'slide-3',
-    badge: "TACTICAL HEALTH UPGRADE // 10% DISCOUNT CODE",
-    title: "Smart Wristband Active Synapse Monitor",
-    subtitle: "High Density Micro-sensors",
-    description: "Keep complete control of biometric telemetry, stress index indices, oxygenation spikes, and real-time deep rest diagnostics.",
-    price: "₹8,499",
-    originalPrice: "₹9,499",
-    code: "WELCOME10",
-    image: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?auto=format&fit=crop&q=80&w=1200",
-    iconName: "Watch",
-    gradient: "from-[#051829]/90 via-[#030d22]/90 to-[#030014]/95",
-    accentColor: "border-teal-500/30 text-teal-400"
-  }
-];
+const DEFAULT_CAROUSEL_SLIDES: CarouselSlide[] = [];
 
-const DEFAULT_PROMO_MESSAGES: PromoMessage[] = [
-  {
-    id: 'b1',
-    iconName: 'Gift',
-    highlightText: "WELCOME BONUS 🎉",
-    regularText: "Get flat ₹199 Off on your very first order!",
-    actionText: "Copy Code",
-    codeToCopy: "WELCOME199"
-  },
-  {
-    id: 'b2',
-    iconName: 'Sparkles',
-    highlightText: "FIRST ORDER SPECIAL ✨",
-    regularText: "Activate premium features & checkout instantly without initial signups!",
-    codeToCopy: "WELCOME199"
-  },
-  {
-    id: 'b3',
-    iconName: 'Truck',
-    highlightText: "COMPLIMENTARY SHIPPING 🚚",
-    regularText: "Free premium tracked delivery across all categories above ₹500."
-  }
-];
+const DEFAULT_PROMO_MESSAGES: PromoMessage[] = [];
 
 // Helper to get local data if in mock mode
 const getLocalData = <T>(key: string, defaultData: T): T => {
@@ -172,11 +56,7 @@ export const dbService = {
   async getProducts(): Promise<Product[]> {
     if (isMockFirebase || !db) {
       const local = getLocalData<Product[]>(PRODUCTS_COLLECTION, []);
-      if (!local || !Array.isArray(local) || local.length === 0) {
-        setLocalData(PRODUCTS_COLLECTION, INITIAL_PRODUCTS);
-        return INITIAL_PRODUCTS;
-      }
-      return local;
+      return local || [];
     }
 
     try {
@@ -189,30 +69,14 @@ export const dbService = {
           products.push({ id: docSnap.id, ...d } as Product);
         }
       });
-
-      // If database is live but is empty, let's bootstrap it with seed products!
-      if (products.length === 0) {
-        for (const prod of INITIAL_PRODUCTS) {
-          try {
-            await setDoc(doc(db, PRODUCTS_COLLECTION, prod.id), prod);
-          } catch (e) {
-            console.warn(`Could not setDoc on live db for product ${prod.id}:`, e);
-          }
-          products.push(prod);
-        }
-      }
       
-      // Seed local storage with the fetched/bootstrapped products
+      // Seed local storage with the fetched products
       setLocalData(PRODUCTS_COLLECTION, products);
       return products;
     } catch (error) {
       console.warn('Firestore products load failed, falling back to secure in-browser storage:', error);
       const local = getLocalData<Product[]>(PRODUCTS_COLLECTION, []);
-      if (!local || !Array.isArray(local) || local.length === 0) {
-        setLocalData(PRODUCTS_COLLECTION, INITIAL_PRODUCTS);
-        return INITIAL_PRODUCTS;
-      }
-      return local;
+      return local || [];
     }
   },
 

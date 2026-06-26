@@ -30,14 +30,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckoutInit }) => {
             className="absolute inset-0 bg-black/80 backdrop-blur-md"
           />
 
-          <div className="absolute inset-y-0 right-0 flex max-w-full pl-10">
+          <div className="absolute inset-y-0 right-0 flex max-w-full pl-0 sm:pl-10">
             {/* Drawer body slide-in */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-              className="w-screen max-w-md bg-[#090525] shadow-2xl flex flex-col h-full border-l border-violet-500/20 text-slate-100"
+              className="w-full sm:w-screen max-w-md bg-[#090525] shadow-2xl flex flex-col h-full border-l border-violet-500/20 text-slate-100"
             >
               {/* Drawer Header */}
               <div className="px-5 py-4 border-b border-violet-950/50 flex items-center justify-between bg-[#05021a]/90">
